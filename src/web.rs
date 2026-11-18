@@ -97,17 +97,36 @@ async fn home(State(state): State<Arc<WebState>>) -> Result<Html<String>, WebErr
     let path = state.database_path.clone();
     let (pages, terms, links) = run_database(path, |database| database.stats()).await?;
     let content = format!(
-        r#"<main class="hero">
-            <a class="brand brand-large" href="/" aria-label="Myrleo pagina principală">
-              <span class="brand-mark"><img src="/myrleo-emblem.webp" alt=""></span><span>Myrleo</span>
-            </a>
-            <p class="tagline">Căutare clasică. Fără reclame. Fără AI.</p>
-            {}
-            <div class="index-stats" aria-label="Statistici index">
-              <span><strong>{pages}</strong> pagini</span>
-              <span><strong>{terms}</strong> termeni</span>
-              <span><strong>{links}</strong> linkuri</span>
-            </div>
+        r#"<main class="front-page">
+            <header class="front-masthead">
+              <div class="publication-line">
+                <span>Index web independent</span>
+                <span>Ediția locală · Rust</span>
+              </div>
+              <a class="brand brand-large" href="/" aria-label="Myrleo pagina principală">
+                <span class="brand-mark"><img src="/myrleo-emblem.webp" alt=""></span>
+                <span class="brand-name">Myrleo</span>
+              </a>
+              <p class="tagline">Căutare clasică, alcătuită din pagini reale.<br>Fără reclame. Fără AI.</p>
+            </header>
+
+            <section class="search-lead">
+              <div class="section-label"><span>01</span> Caută în index</div>
+              {}
+            </section>
+
+            <section class="index-ledger" aria-label="Despre index">
+              <article>
+                <div class="section-label"><span>02</span> Nota editorului</div>
+                <h2>Un motor care arată de unde vin rezultatele.</h2>
+                <p>Myrleo citește paginile permise, le indexează local și le ordonează prin algoritmi clasici. Nu inventează răspunsuri și nu cumpără poziții.</p>
+              </article>
+              <dl class="index-stats">
+                <div><dt>Pagini</dt><dd>{pages}</dd></div>
+                <div><dt>Termeni</dt><dd>{terms}</dd></div>
+                <div><dt>Legături</dt><dd>{links}</dd></div>
+              </dl>
+            </section>
           </main>"#,
         search_form("", "bm25", true)
     );
@@ -148,10 +167,14 @@ async fn search(
     write!(
         content,
         r#"<header class="search-header">
-             <a class="brand" href="/"><span class="brand-mark"><img src="/myrleo-emblem.webp" alt=""></span><span>Myrleo</span></a>
-             {}
+             <div class="publication-line"><span>Index web independent</span><span>Arhiva Myrleo</span></div>
+             <div class="search-header-main">
+               <a class="brand" href="/"><span class="brand-mark"><img src="/myrleo-emblem.webp" alt=""></span><span class="brand-name">Myrleo</span></a>
+               {}
+             </div>
            </header>
-           <main class="results-page">"#,
+           <main class="results-page">
+             <div class="section-label"><span>03</span> Rezultatele indexului</div>"#,
         search_form(&query, algorithm_name, false)
     )
     .expect("scriere în String");
@@ -180,8 +203,8 @@ async fn search(
         );
     } else {
         content.push_str("<ol class=\"results-list\">");
-        for result in data.results {
-            write_result(&mut content, &result);
+        for (position, result) in data.results.into_iter().enumerate() {
+            write_result(&mut content, position + 1, &result);
         }
         content.push_str("</ol>");
     }
@@ -259,7 +282,7 @@ fn corrected_query(database: &Database, query: &str) -> Result<Option<String>> {
     Ok(changed.then(|| corrected.join(" ")))
 }
 
-fn write_result(output: &mut String, result: &SearchResult) {
+fn write_result(output: &mut String, position: usize, result: &SearchResult) {
     let terms = result
         .matched_terms
         .iter()
@@ -268,12 +291,16 @@ fn write_result(output: &mut String, result: &SearchResult) {
         .join(", ");
     write!(
         output,
-        r#"<li class="result-card">
-              <a class="result-url" href="{}" rel="noopener noreferrer">{}</a>
-              <h2><a href="{}" rel="noopener noreferrer">{}</a></h2>
-              <p>{}</p>
-              <div class="result-meta">Scor {:.3} · {}</div>
+        r#"<li class="result-row">
+              <div class="result-number">{:02}</div>
+              <article>
+                <a class="result-url" href="{}" rel="noopener noreferrer">{}</a>
+                <h2><a href="{}" rel="noopener noreferrer">{}</a></h2>
+                <p>{}</p>
+                <div class="result-meta">Scor {:.3} · {}</div>
+              </article>
             </li>"#,
+        position,
         escape_html(&result.url),
         escape_html(&result.url),
         escape_html(&result.url),
@@ -366,7 +393,7 @@ fn layout(title: &str, content: &str) -> String {
 </head>
 <body>
   {}
-  <footer><span>Myrleo</span><span>Fără reclame · Fără AI</span></footer>
+  <footer><span>Myrleo · Index independent</span><span>Fără reclame · Fără AI · Fără poziții cumpărate</span></footer>
 </body>
 </html>"#,
         escape_html(title),

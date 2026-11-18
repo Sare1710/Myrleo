@@ -9,6 +9,8 @@ scris în Rust.
 
 Identitatea vizuală folosește emblema aurie Myrleo și o paletă negru–auriu–crem.
 
+![Interfața editorială Myrleo](assets/screenshots/myrleo-home.webp)
+
 Versiunea actuală poate:
 
 - parcurge un site prin BFS;
