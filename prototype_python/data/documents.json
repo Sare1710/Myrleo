@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Python pentru începători",
+    "text": "Python este un limbaj de programare ușor de citit. Este potrivit pentru primele proiecte.",
+    "url": "https://www.python.org/"
+  },
+  {
+    "id": 2,
+    "title": "Linux și programele libere",
+    "text": "Linux este un sistem de operare liber. Programele pot fi studiate și îmbunătățite de comunitate.",
+    "url": "https://www.kernel.org/"
+  },
+  {
+    "id": 3,
+    "title": "Cum funcționează un motor de căutare",
+    "text": "Un motor de căutare citește documente și construiește un index inversat. Utilizatorul caută cuvinte în acest index.",
+    "url": "https://en.wikipedia.org/wiki/Search_engine"
+  },
+  {
+    "id": 4,
+    "title": "Indexul inversat",
+    "text": "Indexul inversat leagă fiecare cuvânt de documentele în care apare și face căutarea rapidă.",
+    "url": "https://en.wikipedia.org/wiki/Inverted_index"
+  }
+]

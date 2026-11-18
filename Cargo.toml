@@ -1,0 +1,24 @@
+[package]
+name = "myrleo"
+version = "0.1.0"
+edition = "2024"
+description = "Motor de căutare web clasic, educațional, scris în Rust"
+license = "MIT"
+repository = "https://github.com/Sare1710/Myrleo"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4.6", features = ["derive"] }
+futures-util = "0.3"
+regex = "1"
+reqwest = { version = "0.13", default-features = false, features = ["brotli", "charset", "deflate", "gzip", "rustls", "stream"] }
+robotstxt = "0.3"
+rusqlite = { version = "0.43", features = ["bundled"] }
+scraper = "0.29"
+sha2 = "0.10"
+tokio = { version = "1.54", features = ["macros", "rt-multi-thread", "time"] }
+unicode-normalization = "0.1"
+url = "2"
+
+[dev-dependencies]
+tempfile = "3"

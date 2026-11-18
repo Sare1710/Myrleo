@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.idea/
+.zed/
+/target/
+/*.db
+/*.db-shm
+/*.db-wal
