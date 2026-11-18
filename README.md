@@ -17,6 +17,7 @@ Versiunea actuală poate:
 - sugera cuvinte prin Trie;
 - corecta termeni prin Levenshtein și BK-tree;
 - calcula PageRank pe graful paginilor descărcate.
+- oferi o interfață web responsive cu autocompletare și corectare.
 
 Versiunea inițială Python este păstrată în `prototype_python/` doar ca material
 educațional. Aplicația principală este cea Rust.
@@ -75,6 +76,18 @@ cargo run -- --database alta.db search "rust"
 
 ```bash
 cargo run -- stats
+```
+
+## Interfața web
+
+```bash
+cargo run -- serve
+```
+
+Deschide apoi `http://127.0.0.1:8080`. Pentru alt port:
+
+```bash
+cargo run -- serve --port 3000
 ```
 
 ## Test local fără accesarea internetului

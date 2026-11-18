@@ -3,6 +3,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 use myrleo::crawler::{CrawlConfig, Crawler};
 use myrleo::model::SearchAlgorithm;
 use myrleo::storage::Database;
+use myrleo::web;
 use std::path::PathBuf;
 use std::time::Duration;
 use url::Url;
@@ -89,12 +90,20 @@ enum Command {
         #[arg(long, default_value_t = 5)]
         limit: usize,
     },
+
+    /// Pornește interfața web locală.
+    Serve {
+        #[arg(long, default_value = "127.0.0.1")]
+        host: String,
+
+        #[arg(long, default_value_t = 8080)]
+        port: u16,
+    },
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
-    let mut database = Database::open(&cli.database)?;
 
     match cli.command {
         Command::Crawl {
@@ -104,6 +113,7 @@ async fn main() -> Result<()> {
             delay_ms,
             max_page_bytes,
         } => {
+            let mut database = Database::open(&cli.database)?;
             let crawler = Crawler::new(CrawlConfig {
                 seed_url: url,
                 max_pages,
@@ -122,6 +132,7 @@ async fn main() -> Result<()> {
             limit,
             algorithm,
         } => {
+            let database = Database::open(&cli.database)?;
             let results = database.search_with_algorithm(&query, limit, algorithm.into())?;
             if results.is_empty() {
                 println!("Nu am găsit rezultate pentru «{query}».");
@@ -138,10 +149,12 @@ async fn main() -> Result<()> {
             }
         }
         Command::Stats => {
+            let database = Database::open(&cli.database)?;
             let (pages, terms, links) = database.stats()?;
             println!("Pagini: {pages}\nTermeni: {terms}\nLinkuri: {links}");
         }
         Command::Suggest { prefix, limit } => {
+            let database = Database::open(&cli.database)?;
             for suggestion in database.autocomplete(&prefix, limit)? {
                 println!("{} ({})", suggestion.term, suggestion.frequency);
             }
@@ -151,12 +164,16 @@ async fn main() -> Result<()> {
             max_distance,
             limit,
         } => {
+            let database = Database::open(&cli.database)?;
             for correction in database.corrections(&term, max_distance, limit)? {
                 println!(
                     "{} (distanță {}, frecvență {})",
                     correction.term, correction.distance, correction.frequency
                 );
             }
+        }
+        Command::Serve { host, port } => {
+            web::serve(cli.database, host, port).await?;
         }
     }
 

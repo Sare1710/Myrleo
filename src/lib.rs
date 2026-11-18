@@ -6,3 +6,4 @@ pub mod query;
 pub mod storage;
 pub mod tokenizer;
 pub mod trie;
+pub mod web;

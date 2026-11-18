@@ -25,13 +25,13 @@ pub enum SearchAlgorithm {
     Phrase,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
 pub struct WordSuggestion {
     pub term: String,
     pub frequency: u64,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
 pub struct Correction {
     pub term: String,
     pub distance: usize,
