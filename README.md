@@ -1,7 +1,13 @@
 # Myrleo
 
+<p align="center">
+  <img src="assets/myrleo-emblem.webp" width="180" alt="Emblema aurie Myrleo">
+</p>
+
 **Myrleo** este un motor de căutare web clasic, fără reclame și fără AI,
 scris în Rust.
+
+Identitatea vizuală folosește emblema aurie Myrleo și o paletă negru–auriu–crem.
 
 Versiunea actuală poate:
 

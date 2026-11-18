@@ -14,6 +14,7 @@ use std::sync::Arc;
 
 const STYLE: &str = include_str!("../assets/style.css");
 const SCRIPT: &str = include_str!("../assets/app.js");
+const EMBLEM: &[u8] = include_bytes!("../assets/myrleo-emblem.webp");
 
 #[derive(Clone)]
 struct WebState {
@@ -73,6 +74,7 @@ pub async fn serve(database_path: PathBuf, host: String, port: u16) -> Result<()
         .route("/health", get(|| async { "ok" }))
         .route("/style.css", get(style))
         .route("/app.js", get(script))
+        .route("/myrleo-emblem.webp", get(emblem))
         .with_state(state);
 
     let address = format!("{host}:{port}");
@@ -97,7 +99,7 @@ async fn home(State(state): State<Arc<WebState>>) -> Result<Html<String>, WebErr
     let content = format!(
         r#"<main class="hero">
             <a class="brand brand-large" href="/" aria-label="Myrleo pagina principală">
-              <span class="brand-mark">M</span><span>Myrleo</span>
+              <span class="brand-mark"><img src="/myrleo-emblem.webp" alt=""></span><span>Myrleo</span>
             </a>
             <p class="tagline">Căutare clasică. Fără reclame. Fără AI.</p>
             {}
@@ -146,7 +148,7 @@ async fn search(
     write!(
         content,
         r#"<header class="search-header">
-             <a class="brand" href="/"><span class="brand-mark">M</span><span>Myrleo</span></a>
+             <a class="brand" href="/"><span class="brand-mark"><img src="/myrleo-emblem.webp" alt=""></span><span>Myrleo</span></a>
              {}
            </header>
            <main class="results-page">"#,
@@ -207,6 +209,16 @@ async fn script() -> impl IntoResponse {
     (
         [(header::CONTENT_TYPE, "text/javascript; charset=utf-8")],
         SCRIPT,
+    )
+}
+
+async fn emblem() -> impl IntoResponse {
+    (
+        [
+            (header::CONTENT_TYPE, "image/webp"),
+            (header::CACHE_CONTROL, "public, max-age=86400"),
+        ],
+        EMBLEM,
     )
 }
 
